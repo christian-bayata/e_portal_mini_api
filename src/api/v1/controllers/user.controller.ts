@@ -15,10 +15,11 @@ const getVerificationCode = async (req: Request, res: Response): Promise<Respons
   const { email } = req.body;
 
   try {
-    // Check if user with this email already exists;
+    /* Check if user with this email already exists; */
     const confirmEmail = await userRepository.findEmail({ email });
     if (confirmEmail) return ResponseHandler.sendError({ res, error: "You already have an account with us" });
 
+    /* Create verification code for user */
     const verCodeData = { email, code: crypto.randomBytes(3).toString("hex").toUpperCase() };
     const userCode = await userRepository.createVerCode(verCodeData);
 

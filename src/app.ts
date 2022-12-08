@@ -7,6 +7,7 @@ import winston from "./logger/winston";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "../swagger.json";
+import indexRouter from "./api/v1/routes/index.route";
 
 /* Initialize express application */
 const app: Application = express();
@@ -28,6 +29,9 @@ sequelize
 app.get("/health-check", (req, res) => {
   return ResponseHandler.sendSuccess({ res, message: "Health check passed" });
 });
+
+/* Bind app port to index router */
+app.use("/api", indexRouter);
 
 /* Use the error handling middleware as the last in the middleware stack */
 app.use(Error);
