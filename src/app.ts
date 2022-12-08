@@ -3,9 +3,15 @@ import express, { Application, Request, Response } from "express";
 import sequelize from "./connection";
 import { Error } from "./middlewares/error.middlewares";
 import ResponseHandler from "./utils/response";
+import winston from "./logger/winston";
+import morgan from "morgan";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "../swagger.json";
 
 /* Initialize express application */
 const app: Application = express();
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(morgan("combined", { stream: winston.stream }));
 app.use(express.json());
 
 /* Database connection */
