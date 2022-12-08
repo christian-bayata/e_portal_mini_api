@@ -16,8 +16,8 @@ class ResponseHandler {
    * @param param0
    * @returns {*}
    */
-  static sendError({ res, success = false, statusCode = statusCodes.BAD_REQUEST, message = "Failed Operation", body = {} }: BuildResponse.ErrorInput): any {
-    return res.status(statusCode).send({ success, message, body });
+  static sendError({ res, success = false, statusCode = statusCodes.BAD_REQUEST, error = "Failed Operation", body = {} }: BuildResponse.ErrorInput): any {
+    return res.status(statusCode).send({ success, error, body });
   }
 
   /**
