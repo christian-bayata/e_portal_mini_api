@@ -3,9 +3,16 @@ import { Response } from "express";
 export namespace BuildResponse {
   export type SuccessInput = {
     res: Response;
-    statusCode: number;
+    statusCode?: number;
     message?: string;
     body?: object;
+    success?: boolean;
+  };
+
+  export type SuccessOutput = {
+    res: Response;
+    message: string;
+    body: object;
     success: boolean;
   };
 
