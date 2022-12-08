@@ -19,10 +19,10 @@ export namespace BuildResponse {
 
   export type FatalErrorInput = {
     res: Response;
-    statusCode: number;
+    statusCode?: number;
     message?: string;
     body?: object;
-    success: boolean;
+    success?: boolean;
     error?: any;
     stack?: any;
   };
