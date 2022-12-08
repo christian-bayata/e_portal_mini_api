@@ -9,6 +9,7 @@ interface UserAttributes {
   email: string;
   password: string;
   dept: string;
+  faculty: string;
   matricNo: string;
   staffNo: string;
   phone: string;
@@ -27,11 +28,12 @@ class User extends Model<UserAttributes, UserInput> implements UserAttributes {
   public email!: string;
   public password!: string;
   public dept!: string;
+  public faculty!: string;
   public matricNo: string;
   public phone!: string;
   public staffNo: string;
-  public isStudent: boolean;
-  public isStaff: boolean;
+  public isStudent!: boolean;
+  public isStaff!: boolean;
 
   static associate(models: any) {
     // define association here
@@ -64,6 +66,10 @@ User.init(
       allowNull: false,
     },
     dept: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    faculty: {
       type: DataTypes.STRING,
       allowNull: false,
     },

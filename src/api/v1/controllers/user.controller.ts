@@ -3,6 +3,8 @@ import userRepository from "../../../repositories/user.repository";
 import ResponseHandler from "../../../utils/response";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
+import { BuildResponse } from "../../../utils/interfaces/utils.interfaces";
+import sendEmail from "../../../utils/send_email";
 
 /**
  * @Title User verification code
@@ -11,7 +13,7 @@ import bcrypt from "bcrypt";
  * @Returns Returns the verification code of the user
  *
  */
-const getVerificationCode = async (req: Request, res: Response): Promise<Response> => {
+const getVerificationCode = async (req: Request, res: Response): Promise<BuildResponse.SuccessObj> => {
   const { email } = req.body;
 
   try {
@@ -23,8 +25,13 @@ const getVerificationCode = async (req: Request, res: Response): Promise<Respons
     const verCodeData = { email, code: crypto.randomBytes(3).toString("hex").toUpperCase() };
     const userCode = await userRepository.createVerCode(verCodeData);
 
+    /* Send verification code to recipients' email address */
+    const message = `Hello, your verification code is ${userCode.code}.\n\n Thanks and regards`;
+    await sendEmail({ email, subject: "Verification Code", message });
+
     return ResponseHandler.sendSuccess({ res, message: "Code successfully sent", body: userCode });
   } catch (error) {
+    // console.log("********************: ", error);
     return ResponseHandler.sendFatalError({ res });
   }
 };

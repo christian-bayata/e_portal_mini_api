@@ -1,6 +1,10 @@
 import { Response } from "express";
 
 export namespace BuildResponse {
+  export type DataObject = {
+    [props: string]: any;
+  };
+
   export type SuccessInput = {
     res: Response;
     statusCode?: number;
@@ -9,11 +13,10 @@ export namespace BuildResponse {
     success?: boolean;
   };
 
-  export type SuccessOutput = {
-    res: Response;
-    message: string;
-    body: object;
+  export type SuccessObj = {
     success: boolean;
+    message: string;
+    body: DataObject;
   };
 
   export type ErrorInput = {
