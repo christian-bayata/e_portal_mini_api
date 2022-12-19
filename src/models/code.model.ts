@@ -1,50 +1,68 @@
-"use strict";
-import { DataTypes, Model, Optional } from "sequelize";
-import sequelize from "../connection";
+// "use strict";
+// import { DataTypes, Model, Optional } from "sequelize";
+// import sequelize from "../connection";
 
-interface CodeAttributes {
-  id: number;
+// interface CodeAttributes {
+//   id: number;
+//   email: string;
+//   code: string;
+// }
+
+// export interface CodeInput extends Optional<CodeAttributes, "id"> {}
+
+// export interface CodeOutput extends Required<CodeAttributes> {}
+
+// class Code extends Model<CodeAttributes, CodeInput> implements CodeAttributes {
+//   public id!: number;
+//   public email!: string;
+//   public code!: string;
+
+//   public readonly createdAt!: Date;
+//   public readonly deletedAt!: Date;
+
+//   static associate(models: any) {
+//     // define association here
+//   }
+// }
+
+// Code.init(
+//   {
+//     id: {
+//       allowNull: false,
+//       primaryKey: true,
+//       type: DataTypes.INTEGER,
+//       autoIncrement: true,
+//     },
+//     email: {
+//       type: DataTypes.STRING,
+//       allowNull: false,
+//     },
+//     code: {
+//       type: DataTypes.STRING,
+//     },
+//   },
+//   {
+//     sequelize: sequelize,
+//     paranoid: false,
+//   }
+// );
+
+// export default Code;
+
+import mongoose from "mongoose";
+const { Schema } = mongoose;
+
+export interface ICode extends mongoose.Document {
   email: string;
   code: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-export interface CodeInput extends Optional<CodeAttributes, "id"> {}
-
-export interface CodeOutput extends Required<CodeAttributes> {}
-
-class Code extends Model<CodeAttributes, CodeInput> implements CodeAttributes {
-  public id!: number;
-  public email!: string;
-  public code!: string;
-
-  public readonly createdAt!: Date;
-  public readonly deletedAt!: Date;
-
-  static associate(models: any) {
-    // define association here
-  }
-}
-
-Code.init(
+export const CodeSchema = new Schema(
   {
-    id: {
-      allowNull: false,
-      primaryKey: true,
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    code: {
-      type: DataTypes.STRING,
-    },
+    email: { type: String, allowNull: false, required: true },
+    code: { type: String, required: true },
   },
-  {
-    sequelize: sequelize,
-    paranoid: false,
-  }
+  { timestamps: true }
 );
-
-export default Code;
