@@ -5,6 +5,8 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { BuildResponse } from "../../../utils/interfaces/utils.interfaces";
 import sendEmail from "../../../utils/send_email";
+// import indexModel from "../../../models/index.model";
+import { statusCodes } from "../../../status-code";
 
 /**
  * @Title User verification code
@@ -15,11 +17,12 @@ import sendEmail from "../../../utils/send_email";
  */
 const getVerificationCode = async (req: Request, res: Response): Promise<BuildResponse.SuccessObj> => {
   const { email } = req.body;
+  if (!email) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, error: "Please provide an email" });
 
   try {
     /* Check if user with this email already exists; */
     const confirmEmail = await userRepository.findEmail({ email });
-    if (confirmEmail) return ResponseHandler.sendError({ res, error: "You already have an account with us" });
+    if (confirmEmail) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, error: "You already have an account with us" });
 
     /* Create verification code for user */
     const verCodeData = { email, code: crypto.randomBytes(3).toString("hex").toUpperCase() };
@@ -29,7 +32,7 @@ const getVerificationCode = async (req: Request, res: Response): Promise<BuildRe
     const message = `Hello, your verification code is ${userCode.code}.\n\n Thanks and regards`;
     await sendEmail({ email, subject: "Verification Code", message });
 
-    return ResponseHandler.sendSuccess({ res, message: "Code successfully sent", body: userCode });
+    return ResponseHandler.sendSuccess({ res, statusCode: statusCodes.CREATED, message: "Code successfully sent", body: userCode });
   } catch (error) {
     // console.log("********************: ", error);
     return ResponseHandler.sendFatalError({ res });
