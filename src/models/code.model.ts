@@ -59,10 +59,12 @@ export interface ICode extends mongoose.Document {
   updatedAt?: Date;
 }
 
-export const CodeSchema = new Schema(
+const CodeSchema: mongoose.Schema = new Schema(
   {
     email: { type: String, allowNull: false, required: true },
     code: { type: String, required: true },
   },
   { timestamps: true }
 );
+
+export default mongoose.model<ICode>("Code", CodeSchema);

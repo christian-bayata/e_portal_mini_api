@@ -119,7 +119,7 @@ export interface IUser extends mongoose.Document {
   updatedAt?: Date;
 }
 
-export const UserSchema = new Schema(
+const UserSchema: mongoose.Schema = new Schema(
   {
     firstName: {
       type: String,
@@ -167,3 +167,5 @@ export const UserSchema = new Schema(
   },
   { timestamps: true }
 );
+
+export default mongoose.model<IUser>("User", UserSchema);
