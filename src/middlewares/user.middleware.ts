@@ -30,7 +30,7 @@ const signupValidation = async (req: Request, res: AdditionalResponse, next: Nex
       profilePhoto: Joi.string().allow(""),
       dept: Joi.string().min(15).required(),
       faculty: Joi.string().min(15).required(),
-      [flag == "student" ? "matricNo" : "staffNo"]: Joi.string().required(),
+      [flag == "student" ? "matricNo" : "staffNo"]: Joi.string().allow(""),
       phone: Joi.string().required(),
       verCode: Joi.string().max(6).required(),
     });

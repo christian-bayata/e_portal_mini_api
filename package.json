@@ -6,7 +6,7 @@
   "scripts": {
     "compile": "npx tsc",
     "start": "npx nodemon ./src/server.ts",
-    "test": "export NODE_ENV=test &&  export PORT=8001 && NODE_OPTIONS=--experimental-vm-modules npx jest --runInBand --verbose --forceExit --detectOpenHandles"
+    "test": "export NODE_ENV=test &&  export PORT=8001 && NODE_OPTIONS=--experimental-vm-modules npx jest --runInBand --verbose --forceExit --coverage"
   },
   "author": "Edomaruse, Frank",
   "dependencies": {

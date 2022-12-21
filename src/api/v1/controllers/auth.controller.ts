@@ -34,7 +34,7 @@ const getVerificationCode = async (req: Request, res: Response): Promise<BuildRe
 
     /* Check if token already exists */
     const confirmToken = await codeRepository.confirmVerCode({ email });
-    if (confirmToken) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "token already exists" });
+    if (confirmToken) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Code already exists" });
 
     /* Create verification code for user */
     const verCodeData = { email, code: crypto.randomBytes(3).toString("hex").toUpperCase() };
@@ -55,7 +55,7 @@ const getVerificationCode = async (req: Request, res: Response): Promise<BuildRe
  *
  * @param req
  * @param res
- * @returns {Promise<*>}
+ * @returns {Promise<BuildResponse.SuccessObj | undefined>}
  */
 
 const userSignup = async (req: Request, res: AdditionalResponse): Promise<BuildResponse.SuccessObj | undefined> => {
@@ -73,7 +73,7 @@ const userSignup = async (req: Request, res: AdditionalResponse): Promise<BuildR
 
     /* Confirm that verification code exists */
     const confirmUserVerCode = await codeRepository.confirmVerCode({ email: data.email, code: data.verCode });
-    if (!confirmUserVerCode) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Invalid verification token, please try again." });
+    if (!confirmUserVerCode) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Invalid verification code, please try again." });
 
     /* Delete token if the received time is past 30 minutes */
     const timeDiff = +(Date.now() - confirmUserVerCode.createdAt.getTime());
