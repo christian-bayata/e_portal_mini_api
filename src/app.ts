@@ -1,7 +1,6 @@
 require("dotenv").config();
 import express, { Application } from "express";
-// import sequelize from "./connection";
-import { Error } from "./middlewares/error.middlewares";
+import { Error } from "./middlewares/error.middleware";
 import ResponseHandler from "./utils/response";
 import winston from "./logger/winston";
 import morgan from "morgan";
@@ -16,17 +15,6 @@ const app: Application = express();
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(morgan("combined", { stream: winston.stream }));
 app.use(express.json());
-
-// /* Database connection */
-// sequelize
-//   //.sync()
-//   .authenticate()
-//   .then(() => {
-//     console.log(`DB connection established successfully in ${process.env.NODE_ENV} mode`);
-//   })
-//   .catch((err: any) => {
-//     console.log("Unable to connect to DB", err);
-//   });
 
 /* Connect to the database */
 new Database(connectionString).connect();

@@ -1,39 +1,37 @@
 import { Response } from "express";
 
+export interface AdditionalResponse extends Response {
+  data?: any;
+}
 export namespace BuildResponse {
   export type DataObject = {
     [props: string]: any;
   };
 
-  export type SuccessInput = {
-    res: Response;
-    statusCode?: number;
-    message?: string;
-    body?: object;
-    success?: boolean;
-  };
+  // export type SuccessInput = {
+  //   res: Response;
+  //   statusCode?: number;
+  //   message?: string;
+  //   body?: object;
+  //   success?: boolean;
+  // };
 
-  export type SuccessObj = {
+  export interface SuccessObj {
     success: boolean;
     message: string;
     body: DataObject;
-  };
+  }
 
-  export type ErrorInput = {
-    res: Response;
-    statusCode?: number;
-    error?: string;
-    body?: object;
-    success?: boolean;
-  };
-
-  export type FatalErrorInput = {
+  export interface SuccessErrorInput {
     res: Response;
     statusCode?: number;
     message?: string;
     body?: object;
     success?: boolean;
+  }
+
+  export interface FatalErrorInput extends SuccessErrorInput {
     error?: any;
     stack?: any;
-  };
+  }
 }

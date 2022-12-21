@@ -1,4 +1,4 @@
-const { statusCodes } = require("../status-code");
+import { statusCodes } from "../status-code";
 import { BuildResponse } from "./interfaces/utils.interfaces";
 
 class ResponseHandler {
@@ -7,7 +7,7 @@ class ResponseHandler {
    * @param param0
    * @returns {*}
    */
-  static sendSuccess({ res, success = true, statusCode = statusCodes.OK, message = "Successful Operation", body = {} }: BuildResponse.SuccessInput): any {
+  static sendSuccess({ res, success = true, statusCode = statusCodes.OK, message = "Successful Operation", body = {} }: BuildResponse.SuccessErrorInput): any {
     return res.status(statusCode).send({ success, message, body });
   }
 
@@ -16,8 +16,8 @@ class ResponseHandler {
    * @param param0
    * @returns {*}
    */
-  static sendError({ res, success = false, statusCode = statusCodes.BAD_REQUEST, error = "Failed Operation", body = {} }: BuildResponse.ErrorInput): any {
-    return res.status(statusCode).send({ success, error, body });
+  static sendError({ res, success = false, statusCode = statusCodes.BAD_REQUEST, message = "Failed Operation", body = {} }: BuildResponse.SuccessErrorInput): any {
+    return res.status(statusCode).send({ success, message, body });
   }
 
   /**
