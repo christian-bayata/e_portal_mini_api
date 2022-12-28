@@ -120,7 +120,7 @@ describe("User Controller", () => {
         profilePhoto: "/Users/user/Desktop/my_profile_photo.jpeg",
         dept: "some_very_valid_user_dept",
         faculty: "some_very_valid_user_faculty",
-        staffNo: "PHY/STF/2009",
+        staffNo: "PHY/STF/2009/009",
         phone: "08190876574",
         verCode: crypto.randomBytes(3).toString("hex").toUpperCase(),
       };
@@ -140,7 +140,7 @@ describe("User Controller", () => {
           profilePhoto: "/Users/user/Desktop/my_profile_photo.jpeg",
           dept: "some_very_valid_user_dept",
           faculty: "some_very_valid_user_faculty",
-          staffNo: "PHY/STF/2009",
+          staffNo: "PHY/STF/2009/009",
           phone: "08190876574",
         },
       ]);
@@ -153,7 +153,7 @@ describe("User Controller", () => {
         profilePhoto: "/Users/user/Desktop/my_profile_photo.jpeg",
         dept: "some_very_valid_user_dept",
         faculty: "some_very_valid_user_faculty",
-        staffNo: "PHY/STF/2009",
+        staffNo: "PHY/STF/2009/009",
         phone: "08190876574",
         verCode: crypto.randomBytes(3).toString("hex").toUpperCase(),
       };
@@ -177,7 +177,7 @@ describe("User Controller", () => {
         profilePhoto: "/Users/user/Desktop/my_profile_photo.jpeg",
         dept: "some_very_valid_user_dept",
         faculty: "some_very_valid_user_faculty",
-        staffNo: "PHY/STF/2009",
+        staffNo: "PHY/STF/2009/009",
         phone: "08190876574",
         verCode: crypto.randomBytes(3).toString("hex").toUpperCase(),
       };
@@ -202,7 +202,7 @@ describe("User Controller", () => {
         profilePhoto: "/Users/user/Desktop/my_profile_photo.jpeg",
         dept: "some_very_valid_user_dept",
         faculty: "some_very_valid_user_faculty",
-        staffNo: "PHY/STF/2009",
+        staffNo: "PHY/STF/2009/009",
         phone: "08190876574",
         verCode: userCode.code,
       };
@@ -251,7 +251,7 @@ describe("User Controller", () => {
         profilePhoto: "/Users/user/Desktop/my_profile_photo.jpeg",
         dept: "some_very_valid_user_dept",
         faculty: "some_very_valid_user_faculty",
-        staffNo: "PHY/STF/2019",
+        staffNo: "PHY/STF/2019/009",
         phone: "08190876574",
         verCode: userCode.code,
       };
@@ -259,6 +259,136 @@ describe("User Controller", () => {
       const response = await request(server).post(`${baseURL}/signup/staff`).send(payload);
       expect(response.status).toBe(201);
       expect(response.body.message).toMatch(/successfully signed up/i);
+      expect(response.body.body).not.toBeNull();
+    });
+  });
+
+  /*****************************************************************************************************************************
+   *
+   **************************************** User Login *******************************************
+   *
+   ******************************************************************************************************************************
+   */
+
+  describe("User Login", () => {
+    it("should fail if matric number is not provided for student login", async () => {
+      const payload = {
+        password: "some_valid_password",
+      };
+
+      const response = await request(server).post(`${baseURL}/login/student`).send(payload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/matricNo/i);
+      expect(response.body.message).toMatch(/required/i);
+    });
+
+    it("should fail if staff number is not provided for staff login", async () => {
+      const payload = {
+        password: "some_valid_password",
+      };
+
+      const response = await request(server).post(`${baseURL}/login/staff`).send(payload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/staffNo/i);
+      expect(response.body.message).toMatch(/required/i);
+    });
+
+    it("should fail if password is not provided for login", async () => {
+      const payload = {
+        matricNo: "CSC/2022/45",
+      };
+
+      const response = await request(server).post(`${baseURL}/login/student`).send(payload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/password/i);
+      expect(response.body.message).toMatch(/required/i);
+    });
+
+    it("should fail if invalid flag is provided in the url resource", async () => {
+      const payload = {
+        staffNo: "CSC/STF/2019/110",
+        password: "some_valid_password",
+      };
+
+      const response = await request(server).post(`${baseURL}/login/someParam`).send(payload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/invalid flag/i);
+    });
+
+    it("should fail if the user account does not exist", async () => {
+      await User.insertMany([
+        {
+          firstName: "user_firstname",
+          lastName: "user_lastname",
+          email: "user_email@gmail.com",
+          password: "user_password",
+          profilePhoto: "/Users/user/Desktop/my_profile_photo.jpeg",
+          dept: "some_very_valid_user_dept",
+          faculty: "some_very_valid_user_faculty",
+          staffNo: "PHY/STF/2009/009",
+          phone: "08190876574",
+        },
+      ]);
+
+      const payload = {
+        staffNo: "CSC/STF/2019/110",
+        password: "some_valid_password",
+      };
+
+      const response = await request(server).post(`${baseURL}/login/staff`).send(payload);
+      expect(response.status).toBe(404);
+      expect(response.body.message).toMatch(/sorry/i);
+      expect(response.body.message).toMatch(/please sign up/i);
+    });
+
+    it("should fail if the user's password does not match", async () => {
+      await User.insertMany([
+        {
+          firstName: "user_firstname",
+          lastName: "user_lastname",
+          email: "user_email11@gmail.com",
+          password: "user_password",
+          profilePhoto: "/Users/user/Desktop/my_profile_photo.jpeg",
+          dept: "some_very_valid_user_dept",
+          faculty: "some_very_valid_user_faculty",
+          staffNo: "PHY/STF/2009/009",
+          phone: "08190876574",
+        },
+      ]);
+
+      const payload = {
+        staffNo: "PHY/STF/2009/009",
+        password: "some_other_password",
+      };
+
+      const response = await request(server).post(`${baseURL}/login/staff`).send(payload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/incorrect password/i);
+    });
+
+    it("should succeed if all requirements are met", async () => {
+      await User.insertMany([
+        {
+          firstName: "user_firstname",
+          lastName: "user_lastname",
+          email: "user_email111@gmail.com",
+          password: await bcrypt.hash("user_password", 10),
+          profilePhoto: "/Users/user/Desktop/my_profile_photo.jpeg",
+          dept: "some_very_valid_user_dept",
+          faculty: "some_very_valid_user_faculty",
+          staffNo: "PHY/STF/2009/009",
+          phone: "08190876574",
+        },
+      ]);
+
+      const payload = {
+        staffNo: "PHY/STF/2009/009",
+        password: "user_password",
+      };
+
+      const response = await request(server).post(`${baseURL}/login/staff`).send(payload);
+      expect(response.status).toBe(200);
+      expect(response.body.message).toMatch(/successful/i);
       expect(response.body.body).not.toBeNull();
     });
   });

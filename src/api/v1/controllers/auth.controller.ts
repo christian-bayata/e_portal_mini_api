@@ -125,7 +125,7 @@ const userSignup = async (req: Request, res: AdditionalResponse): Promise<BuildR
  * @returns {Promise<*>}
  */
 
-const userLogin = async (req: Request, res: AdditionalResponse) => {
+const userLogin = async (req: Request, res: AdditionalResponse): Promise<BuildResponse.SuccessObj> => {
   const { data } = res;
   const { flag } = req.params;
 
@@ -139,7 +139,7 @@ const userLogin = async (req: Request, res: AdditionalResponse) => {
 
     /* validate user password with bcrypt */
     const validPassword = await userExists?.comparePassword(data.password);
-    if (!validPassword) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Incorrect Password! Unauthorized" });
+    if (!validPassword) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Incorrect Password" });
 
     /* Generate JWT token for user */
     const token = userExists?.generateJsonWebToken();
