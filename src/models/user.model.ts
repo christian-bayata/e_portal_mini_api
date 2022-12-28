@@ -21,6 +21,8 @@ export interface IUser extends mongoose.Document {
   phone: string;
   isStudent: boolean;
   isStaff: boolean;
+  resetPasswordToken?: string;
+  //resetPasswordDate?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -79,6 +81,8 @@ const UserSchema: mongoose.Schema = new Schema(
       type: String,
       allowNull: false,
     },
+    resetPasswordToken: String,
+    //resetPasswordDate: Date,
   },
   { timestamps: true }
 );

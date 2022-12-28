@@ -9,4 +9,6 @@ authRouter.post("/signup/:flag", userMiddleware.signupValidation, authController
 
 authRouter.post("/login/:flag", userMiddleware.loginValidation, authController.userLogin);
 
+authRouter.post("/forgot-password", authController.forgotPassword);
+
 export default authRouter;

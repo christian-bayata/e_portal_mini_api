@@ -1,4 +1,5 @@
 export interface UserDto {
+  [prop: string]: any;
   id: number;
   firstName: string;
   lastName: string;
@@ -10,6 +11,8 @@ export interface UserDto {
   isStaff: boolean;
   isStudent: boolean;
   phone: string;
+  resetPasswordToken: string;
+  //resetPasswordDate: number;
   comparePassword(password: string): boolean | undefined;
   generateJsonWebToken(): string;
 }

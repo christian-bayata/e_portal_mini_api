@@ -122,7 +122,7 @@ const userSignup = async (req: Request, res: AdditionalResponse): Promise<BuildR
  *
  * @param req
  * @param res
- * @returns {Promise<*>}
+ * @returns {Promise<BuildResponse.SuccessObj>}
  */
 
 const userLogin = async (req: Request, res: AdditionalResponse): Promise<BuildResponse.SuccessObj> => {
@@ -153,4 +153,39 @@ const userLogin = async (req: Request, res: AdditionalResponse): Promise<BuildRe
   }
 };
 
-export default { getVerificationCode, userSignup, userLogin };
+/**
+ * @Responsibility: Provide user with password reset token
+ *
+ * @param req
+ * @param res
+ * @returns {Promise<BuildResponse.SuccessObj>}
+ */
+
+const forgotPassword = async (req: Request, res: Response): Promise<BuildResponse.SuccessObj> => {
+  const { email } = req.body;
+
+  if (!email) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Please provide a valid email" });
+
+  try {
+    const user = await userRepository.findUser({ email });
+    if (!user) return ResponseHandler.sendError({ res, statusCode: statusCodes.NOT_FOUND, message: "Sorry you do not have an account with us. Please sign up" });
+
+    //Create reset password token and save
+    const getResetToken = await helper.resetToken(user);
+
+    const resetUrl = `${req.protocol}://${req.get("host")}/api/user/reset-password/${getResetToken}`;
+
+    //Set the password reset email message for client
+    const message = `This is your password reset token: \n\n${resetUrl}\n\nIf you have not requested this email, then ignore it`;
+
+    //The reset token email
+    await sendEmail({ email: user.email, subject: "Password Recovery", message });
+
+    return ResponseHandler.sendSuccess({ res, statusCode: statusCodes.OK, message: "Password reset token successfully sent" });
+  } catch (error) {
+    // console.log(error);
+    return ResponseHandler.sendFatalError({ res });
+  }
+};
+
+export default { getVerificationCode, userSignup, userLogin, forgotPassword };

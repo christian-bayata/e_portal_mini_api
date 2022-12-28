@@ -1,5 +1,5 @@
 import * as CryptoJS from "crypto-js";
-// const crypto = require("crypto");
+import * as crypto from "crypto";
 import { UserDto } from "../dto/user.dto";
 
 const formatUserData = (data: UserDto) => {
@@ -7,6 +7,18 @@ const formatUserData = (data: UserDto) => {
   return ciphertext;
 };
 
+const resetToken = async (user: UserDto) => {
+  const token = crypto.randomBytes(20).toString("hex");
+
+  //Encrypt the token and set it to resetPasswordToken
+  user.resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
+  // user.resetPasswordDate = Date.now();
+  await user.save();
+
+  return user.resetPasswordToken;
+};
+
 export default {
   formatUserData,
+  resetToken,
 };
