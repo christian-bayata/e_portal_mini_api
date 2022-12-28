@@ -14,6 +14,7 @@ import { v2 as cloudinary } from "cloudinary";
 import util from "util";
 import request from "request";
 const theRequest = util.promisify(request);
+import helper from "../../../utils/helper";
 
 /**
  * @Author Edomaruse, Frank
@@ -116,4 +117,40 @@ const userSignup = async (req: Request, res: AdditionalResponse): Promise<BuildR
   }
 };
 
-export default { getVerificationCode, userSignup };
+/**
+ * @Responsibility:  Login an existing user
+ *
+ * @param req
+ * @param res
+ * @returns {Promise<*>}
+ */
+
+const userLogin = async (req: Request, res: AdditionalResponse) => {
+  const { data } = res;
+  const { flag } = req.params;
+
+  const validFlags = ["student", "staff"];
+  if (!validFlags.includes(flag)) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Invalid flag" });
+
+  try {
+    /* Check if user already exists */
+    const userExists = flag == "student" ? await userRepository.findUser({ matricNo: data.matricNo }) : await userRepository.findUser({ staffNo: data.staffNo });
+    if (!userExists) return ResponseHandler.sendError({ res, statusCode: statusCodes.NOT_FOUND, message: "Sorry you do not have an account with us. Please sign up" });
+
+    /* validate user password with bcrypt */
+    const validPassword = await userExists?.comparePassword(data.password);
+    if (!validPassword) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Incorrect Password! Unauthorized" });
+
+    /* Generate JWT token for user */
+    const token = userExists?.generateJsonWebToken();
+
+    /* Format and hash user data for security */
+    const protectedData = helper.formatUserData(userExists);
+
+    return ResponseHandler.sendSuccess({ res, statusCode: statusCodes.OK, message: "User successfully logged in", body: { token, protectedData } });
+  } catch (error) {
+    return ResponseHandler.sendFatalError({ res });
+  }
+};
+
+export default { getVerificationCode, userSignup, userLogin };

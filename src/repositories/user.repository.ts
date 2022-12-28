@@ -14,10 +14,10 @@ const findUser = async (where: UserDataInput): Promise<UserDto | null> => {
 /**
  *
  * @param data
- * @returns {Promise<UserDto>}
+ * @returns {Promise<Partial<UserDto>>}
  */
 
-const createUser = async (data: UserDataInput): Promise<UserDto> => {
+const createUser = async (data: UserDataInput): Promise<Partial<UserDto>> => {
   return await User.create(data);
 };
 

@@ -88,7 +88,7 @@ UserSchema.methods.generateJsonWebToken = function () {
   return jwt.sign(
     {
       _id: this._id,
-      email: this.email,
+      staffNo: this.staffNo,
       isStaff: this.isStaff,
     },
     process.env.JWT_SECRET_KEY as string

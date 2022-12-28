@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import * as Joi from "joi";
 import ResponseHandler from "../utils/response";
 import { AdditionalResponse } from "../utils/interfaces/utils.interfaces";
+import { UserDto } from "../dto/user.dto";
 // import status from "../status-code";
 // import * as jwt from "jsonwebtoken";
 
@@ -11,10 +12,10 @@ import { AdditionalResponse } from "../utils/interfaces/utils.interfaces";
  * @param req
  * @param res
  * @param next
- * @returns {*}
+ * @returns {Promise<UserDto>}
  */
 
-const signupValidation = async (req: Request, res: AdditionalResponse, next: NextFunction) => {
+const signupValidation = async (req: Request, res: AdditionalResponse, next: NextFunction): Promise<UserDto | void> => {
   const payload = req.body;
   const { flag } = req.params;
 
@@ -44,8 +45,40 @@ const signupValidation = async (req: Request, res: AdditionalResponse, next: Nex
     res.data = value;
     return next();
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
-export default { signupValidation };
+/**
+ * @Responsibility: Validation middleware for user sign up
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise<UserDto | void>}
+ */
+
+const loginValidation = async (req: Request, res: AdditionalResponse, next: NextFunction): Promise<UserDto | void> => {
+  const payload = req.body;
+  const { flag } = req.params;
+
+  try {
+    const schema = Joi.object({
+      [flag == "student" ? "matricNo" : "staffNo"]: Joi.string().required(),
+      password: Joi.string().min(6).required(),
+    });
+
+    const { error, value } = schema.validate(payload);
+
+    if (error) {
+      return ResponseHandler.sendError({ res, message: error.details[0].message });
+    }
+
+    res.data = value;
+    return next();
+  } catch (error) {
+    throw error;
+  }
+};
+
+export default { signupValidation, loginValidation };
