@@ -2,7 +2,6 @@
 
 import mongoose from "mongoose";
 import mongoosastic from "mongoosastic";
-import { string } from "joi";
 const { Schema } = mongoose;
 
 export interface IPayment extends mongoose.Document {

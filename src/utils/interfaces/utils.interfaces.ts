@@ -2,20 +2,24 @@ import { Response } from "express";
 
 export interface AdditionalResponse extends Response {
   data?: any;
+  user?: any;
 }
+
+export interface UserJwtPayload {
+  _id: string;
+  matricNo?: string;
+  isStudent?: boolean;
+}
+
+export interface AdminJwtPayload extends UserJwtPayload {
+  staffNo?: string;
+  isStaff?: boolean;
+}
+
 export namespace BuildResponse {
   export type DataObject = {
     [props: string]: any;
   };
-
-  // export type SuccessInput = {
-  //   res: Response;
-  //   statusCode?: number;
-  //   message?: string;
-  //   body?: object;
-  //   success?: boolean;
-  // };
-
   export interface SuccessObj {
     success: boolean;
     message: string;

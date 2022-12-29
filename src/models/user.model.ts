@@ -87,12 +87,12 @@ const UserSchema: mongoose.Schema = new Schema(
 );
 
 /* Generate JSON web token for user */
-UserSchema.methods.generateJsonWebToken = function () {
+UserSchema.methods.generateJsonWebToken = function (type: string) {
   return jwt.sign(
     {
       _id: this._id,
-      staffNo: this.staffNo,
-      isStaff: this.isStaff,
+      [type == "student" ? "matricNo" : "staffNo"]: this.staffNo,
+      [type == "student" ? "isStudent" : "isStaff"]: this.isStaff,
     },
     process.env.JWT_SECRET_KEY as string
   );

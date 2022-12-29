@@ -142,7 +142,7 @@ const userLogin = async (req: Request, res: AdditionalResponse): Promise<BuildRe
     if (!validPassword) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Incorrect Password" });
 
     /* Generate JWT token for user */
-    const token = userExists?.generateJsonWebToken();
+    const token = flag == "student" ? userExists?.generateJsonWebToken("student") : userExists?.generateJsonWebToken("staff");
 
     /* Format and hash user data for security */
     const protectedData = helper.formatUserData(userExists);
@@ -231,7 +231,7 @@ const resetPassword = async (req: Request, res: Response): Promise<BuildResponse
     await user.save();
 
     // Generate another Auth token for user
-    const authToken = user.generateJsonWebToken();
+    const authToken = !!user.isStudent ? user?.generateJsonWebToken("student") : user?.generateJsonWebToken("staff");
 
     /* Format and hash user data for security */
     const protectedData = helper.formatUserData(user);

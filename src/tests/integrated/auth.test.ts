@@ -239,7 +239,7 @@ describe("User Controller", () => {
 
     it("should succeed if staff flag is passed into url resource", async () => {
       const userCode = await Code.create({
-        email: "user_email@gmail.com",
+        email: "user_email10@gmail.com",
         code: crypto.randomBytes(3).toString("hex").toUpperCase(),
       });
 
@@ -571,7 +571,7 @@ describe("User Controller", () => {
       };
 
       const response = await request(server).patch(`${baseURL}/reset-password/${resetPasswordToken}`).send(payload);
-      // expect(response.status).toBe(200);
+      expect(response.status).toBe(200);
       expect(response.body.message).toMatch(/Password reset is successful/i);
     });
   });

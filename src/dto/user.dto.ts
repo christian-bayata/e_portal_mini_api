@@ -14,7 +14,7 @@ export interface UserDto {
   resetPasswordToken: string | undefined;
   resetPasswordDate: Date | undefined;
   comparePassword(password: string): boolean | undefined;
-  generateJsonWebToken(): string;
+  generateJsonWebToken(flag: string): string;
 }
 
 export type UserDataInput = {
