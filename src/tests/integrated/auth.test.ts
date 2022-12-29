@@ -392,4 +392,64 @@ describe("User Controller", () => {
       expect(response.body.body).not.toBeNull();
     });
   });
+
+  /*****************************************************************************************************************************
+   *
+   **************************************** User Forgot Password *******************************************
+   *
+   ******************************************************************************************************************************
+   */
+
+  describe("User Forgot Password", () => {
+    it("should fail if email is not provided", async () => {
+      const payload = {};
+
+      const response = await request(server).post(`${baseURL}/forgot-password`).send(payload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/valid email/i);
+    });
+
+    it("should fail if the email is wrong", async () => {
+      await User.insertMany([
+        {
+          firstName: "user_firstname",
+          lastName: "user_lastname",
+          email: "user_email1111@gmail.com",
+          password: "user_password",
+          profilePhoto: "/Users/user/Desktop/my_profile_photo.jpeg",
+          dept: "some_very_valid_user_dept",
+          faculty: "some_very_valid_user_faculty",
+          staffNo: "PHY/STF/2009/009",
+          phone: "08190876574",
+        },
+      ]);
+
+      const payload = { email: "user11@gmail.com" };
+
+      const response = await request(server).post(`${baseURL}/forgot-password`).send(payload);
+      expect(response.status).toBe(404);
+      expect(response.body.message).toMatch(/sorry/i);
+      expect(response.body.message).toMatch(/please sign up/i);
+    });
+
+    it("should succeed if the email is right", async () => {
+      await User.insertMany([
+        {
+          name: "company_name",
+          email: "some_email11111@gmail.com",
+          address: "some_adress",
+          state: "some_state",
+          city: "some_city",
+          password: await bcrypt.hash("some_password", 10),
+          verCode: crypto.randomBytes(3).toString("hex").toUpperCase(),
+        },
+      ]);
+
+      const payload = { email: "some_email11111@gmail.com" };
+
+      const response = await request(server).post(`${baseURL}/forgot-password`).send(payload);
+      expect(response.status).toBe(200);
+      expect(response.body.message).toMatch(/token successfully sent/i);
+    });
+  });
 });
