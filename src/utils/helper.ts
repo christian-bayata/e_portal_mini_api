@@ -12,7 +12,7 @@ const resetToken = async (user: UserDto) => {
 
   //Encrypt the token and set it to resetPasswordToken
   user.resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
-  // user.resetPasswordDate = Date.now();
+  user.resetPasswordDate = new Date(Date.now());
   await user.save();
 
   return user.resetPasswordToken;

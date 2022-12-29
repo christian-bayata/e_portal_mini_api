@@ -173,7 +173,7 @@ const forgotPassword = async (req: Request, res: Response): Promise<BuildRespons
     //Create reset password token and save
     const getResetToken = await helper.resetToken(user);
 
-    const resetUrl = `${req.protocol}://${req.get("host")}/api/user/reset-password/${getResetToken}`;
+    const resetUrl = `${req.protocol}://${req.get("host")}/api/auth/reset-password/${getResetToken}`;
 
     //Set the password reset email message for client
     const message = `This is your password reset token: \n\n${resetUrl}\n\nIf you have not requested this email, then ignore it`;
@@ -183,9 +183,64 @@ const forgotPassword = async (req: Request, res: Response): Promise<BuildRespons
 
     return ResponseHandler.sendSuccess({ res, statusCode: statusCodes.OK, message: "Password reset token successfully sent" });
   } catch (error) {
-    // console.log(error);
+    console.log(error);
     return ResponseHandler.sendFatalError({ res });
   }
 };
 
-export default { getVerificationCode, userSignup, userLogin, forgotPassword };
+/**
+ * @Responsibility: Enables user reset password with reset token
+ *
+ * @param req
+ * @param res
+ * @returns {Promise<BuildResponse.SuccessObj>}
+ */
+
+const resetPassword = async (req: Request, res: Response): Promise<BuildResponse.SuccessObj> => {
+  const { password, confirmPassword } = req.body;
+  const { token } = req.params;
+
+  if (!token) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Provide the reset token" });
+
+  try {
+    const user = await userRepository.findUser({ resetPasswordToken: token });
+    if (!user) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Password reset token is invalid" });
+
+    // Check to see if the token is still valid
+    if (user.resetPasswordDate) {
+      const timeDiff = +(Date.now() - user.resetPasswordDate.getTime());
+      const timeDiffInMins = +(timeDiff / (1000 * 60));
+
+      if (timeDiffInMins > 30) {
+        user.resetPasswordToken = undefined;
+        user.resetPasswordDate = undefined;
+        await user.save();
+
+        return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Password reset token has expired" });
+      }
+    }
+
+    // Confirm if the password matches
+    if (password !== confirmPassword) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Password does not match" });
+
+    // If password matches
+    user.password = password;
+
+    user.resetPasswordToken = undefined;
+    user.resetPasswordDate = undefined;
+    await user.save();
+
+    // Generate another Auth token for user
+    const authToken = user.generateJsonWebToken();
+
+    /* Format and hash user data for security */
+    const protectedData = helper.formatUserData(user);
+
+    return ResponseHandler.sendSuccess({ res, statusCode: statusCodes.OK, message: "Password reset is successful", body: { token: authToken, userData: protectedData } });
+  } catch (error) {
+    console.log(error);
+    return ResponseHandler.sendFatalError({ res });
+  }
+};
+
+export default { getVerificationCode, userSignup, userLogin, forgotPassword, resetPassword };
