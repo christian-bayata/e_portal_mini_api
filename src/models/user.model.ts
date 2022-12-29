@@ -1,5 +1,4 @@
 "use strict";
-import { NextFunction } from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
@@ -22,7 +21,7 @@ export interface IUser extends mongoose.Document {
   isStudent: boolean;
   isStaff: boolean;
   resetPasswordToken?: string;
-  //resetPasswordDate?: Date;
+  resetPasswordDate?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }
