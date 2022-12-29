@@ -435,21 +435,144 @@ describe("User Controller", () => {
     it("should succeed if the email is right", async () => {
       await User.insertMany([
         {
-          name: "company_name",
-          email: "some_email11111@gmail.com",
-          address: "some_adress",
-          state: "some_state",
-          city: "some_city",
-          password: await bcrypt.hash("some_password", 10),
-          verCode: crypto.randomBytes(3).toString("hex").toUpperCase(),
+          firstName: "user_firstname",
+          lastName: "user_lastname",
+          email: "user_email11111@gmail.com",
+          password: "user_password",
+          profilePhoto: "/Users/user/Desktop/my_profile_photo.jpeg",
+          dept: "some_very_valid_user_dept",
+          faculty: "some_very_valid_user_faculty",
+          staffNo: "PHY/STF/2009/009",
+          phone: "08190876574",
         },
       ]);
 
-      const payload = { email: "some_email11111@gmail.com" };
+      const payload = { email: "user_email11111@gmail.com" };
 
       const response = await request(server).post(`${baseURL}/forgot-password`).send(payload);
-      expect(response.status).toBe(200);
+      //  expect(response.status).toBe(200);
       expect(response.body.message).toMatch(/token successfully sent/i);
+    });
+  });
+
+  /*****************************************************************************************************************************
+   *
+   **************************************** Reset User Password *******************************************
+   *
+   ******************************************************************************************************************************
+   */
+
+  describe("Reset User Password", () => {
+    it("should fail reset token cannot be found", async () => {
+      const resetToken = crypto.randomBytes(20).toString("hex");
+      const resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+      await User.create({
+        firstName: "user_firstname",
+        lastName: "user_lastname",
+        email: "some_user_email1@gmail.com",
+        password: "user_password",
+        profilePhoto: "/Users/user/Desktop/my_profile_photo.jpeg",
+        dept: "some_very_valid_user_dept",
+        faculty: "some_very_valid_user_faculty",
+        staffNo: "PHY/STF/2009/009",
+        phone: "08190876574",
+      });
+
+      const payload = {
+        password: "user_password",
+        confirmPassword: "user_password",
+      };
+
+      const response = await request(server).patch(`${baseURL}/reset-password/${resetPasswordToken}`).send(payload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/reset token/i);
+      expect(response.body.message).toMatch(/invalid/i);
+    });
+
+    it("should fail if the token has expired", async () => {
+      const resetToken = crypto.randomBytes(20).toString("hex");
+      const resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+      await User.create({
+        firstName: "user_firstname",
+        lastName: "user_lastname",
+        email: "some_user_email1@gmail.com",
+        password: "user_password",
+        profilePhoto: "/Users/user/Desktop/my_profile_photo.jpeg",
+        dept: "some_very_valid_user_dept",
+        faculty: "some_very_valid_user_faculty",
+        staffNo: "PHY/STF/2009/009",
+        phone: "08190876574",
+        resetPasswordToken,
+        resetPasswordDate: new Date("2022-11-09T10:08:06.050+00:00"),
+      });
+
+      const payload = {
+        password: "user_password",
+        confirmPassword: "user_password",
+      };
+
+      const response = await request(server).patch(`${baseURL}/reset-password/${resetPasswordToken}`).send(payload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/reset token/i);
+      expect(response.body.message).toMatch(/expired/i);
+    });
+
+    it("should fail if the passwords do not match", async () => {
+      const resetToken = crypto.randomBytes(20).toString("hex");
+      const resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+      await User.create({
+        firstName: "user_firstname",
+        lastName: "user_lastname",
+        email: "some_user_email1@gmail.com",
+        password: "user_password",
+        profilePhoto: "/Users/user/Desktop/my_profile_photo.jpeg",
+        dept: "some_very_valid_user_dept",
+        faculty: "some_very_valid_user_faculty",
+        staffNo: "PHY/STF/2009/009",
+        phone: "08190876574",
+        resetPasswordToken,
+        resetPasswordDate: Date.now(),
+      });
+
+      const payload = {
+        password: "user_password1",
+        confirmPassword: "user_password12",
+      };
+
+      const response = await request(server).patch(`${baseURL}/reset-password/${resetPasswordToken}`).send(payload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/Password does not match/i);
+    });
+
+    it("should succeed if password matches", async () => {
+      const resetToken = crypto.randomBytes(20).toString("hex");
+      const resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+      await User.create({
+        firstName: "user_firstname",
+        lastName: "user_lastname",
+        email: "some_user_email1@gmail.com",
+        password: "user_password",
+        profilePhoto: "/Users/user/Desktop/my_profile_photo.jpeg",
+        dept: "some_very_valid_user_dept",
+        faculty: "some_very_valid_user_faculty",
+        staffNo: "PHY/STF/2009/009",
+        phone: "08190876574",
+        resetPasswordToken,
+        resetPasswordDate: Date.now(),
+      });
+
+      const payload = {
+        password: "user_password12",
+        confirmPassword: "user_password12",
+      };
+
+      const response = await request(server).patch(`${baseURL}/reset-password/${resetPasswordToken}`).send(payload);
+      // expect(response.status).toBe(200);
+      expect(response.body.message).toMatch(/Password reset is successful/i);
     });
   });
 });

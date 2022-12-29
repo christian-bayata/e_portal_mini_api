@@ -11,6 +11,6 @@ authRouter.post("/login/:flag", userMiddleware.loginValidation, authController.u
 
 authRouter.post("/forgot-password", authController.forgotPassword);
 
-authRouter.post("/reset-password/:token", authController.resetPassword);
+authRouter.patch("/reset-password/:token", authController.resetPassword);
 
 export default authRouter;
