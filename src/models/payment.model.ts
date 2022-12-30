@@ -8,9 +8,10 @@ export interface IPayment extends mongoose.Document {
   amount: number;
   reference: number;
   paidAt: Date;
+  email: string;
   currency: string;
   session: string;
-  user: object;
+  user: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -24,6 +25,7 @@ const PaymentSchema: mongoose.Schema = new Schema(
     email: {
       type: String,
       required: true,
+      es_indexed: true,
     },
     reference: {
       type: String,

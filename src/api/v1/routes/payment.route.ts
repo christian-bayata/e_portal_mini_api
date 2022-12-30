@@ -5,4 +5,6 @@ import userMiddleware from "../../../middlewares/user.middleware";
 
 paymentRouter.post("/initialize-payment", userMiddleware.authenticateUser, paymentController.initializePayment);
 
+paymentRouter.get("/verify-payment", userMiddleware.authenticateUser, paymentController.verifyPayment);
+
 export default paymentRouter;

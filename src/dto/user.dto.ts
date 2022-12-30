@@ -1,6 +1,6 @@
 export interface UserDto {
   [prop: string]: any;
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
