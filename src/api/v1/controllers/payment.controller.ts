@@ -23,7 +23,7 @@ const initializePayment = async (req: Request, res: AdditionalResponse): Promise
 
   try {
     const theUser = await userRepository.findUser({ _id: user._id });
-    if (!theUser) return ResponseHandler.sendError({ res, statusCode: statusCodes.NOT_FOUND, message: "ID not found" });
+    if (!theUser) return ResponseHandler.sendError({ res, statusCode: statusCodes.NOT_FOUND, message: "User not found" });
 
     const url = `https://api.paystack.co/transaction/initialize`;
     const SECRET = process.env.PAYSTACK_TEST_SK;
@@ -42,10 +42,6 @@ const initializePayment = async (req: Request, res: AdditionalResponse): Promise
     theRequest(options).then((resp) => {
       if (resp.body.status == true) {
         return ResponseHandler.sendSuccess({ res, statusCode: statusCodes.OK, message: resp.body.message, body: resp.body.data });
-      }
-
-      if (resp.body.status == false) {
-        return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Authorization url not successfully created" });
       }
     });
   } catch (error) {

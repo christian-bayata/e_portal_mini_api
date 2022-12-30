@@ -22,6 +22,7 @@ export interface IUser extends mongoose.Document {
   isStaff: boolean;
   resetPasswordToken?: string;
   resetPasswordDate?: Date;
+  //generateJsonWebToken(flag: string): String;
   createdAt?: Date;
   updatedAt?: Date;
 }
