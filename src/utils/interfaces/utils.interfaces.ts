@@ -3,12 +3,19 @@ import { Response } from "express";
 export interface AdditionalResponse extends Response {
   data?: any;
   user?: any;
+  admin?: any;
 }
 
 export interface UserJwtPayload {
   _id: string;
   matricNo?: string;
   isStudent?: boolean;
+}
+
+export interface AdminJwtPayload {
+  _id: string;
+  staffNo?: string;
+  isStaff?: boolean;
 }
 
 export interface AdminJwtPayload extends UserJwtPayload {

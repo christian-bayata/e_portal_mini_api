@@ -19,9 +19,9 @@ import helper from "../../../utils/helper";
  * @Title User verification code
  * @Param req
  * @Param res
- * @Returns Returns the verification code of the user
- *
+ * @returns {Promise<BuildResponse.SuccessObj | undefined>}
  */
+
 const getVerificationCode = async (req: Request, res: Response): Promise<BuildResponse.SuccessObj> => {
   const { email } = req.body;
   if (!email) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Please provide an email" });

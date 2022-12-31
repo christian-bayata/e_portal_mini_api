@@ -1,8 +1,6 @@
 import request from "supertest";
 import mongoose from "mongoose";
 import User from "../../models/user.model";
-import Payment from "../../models/payment.model";
-import { UserDto } from "../../dto/user.dto";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 

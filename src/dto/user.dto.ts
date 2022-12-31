@@ -11,6 +11,7 @@ export interface UserDto {
   isStaff: boolean;
   isStudent: boolean;
   phone: string;
+  courses: string[];
   resetPasswordToken: string | undefined;
   resetPasswordDate: Date | undefined;
   comparePassword(password: string): boolean | undefined;

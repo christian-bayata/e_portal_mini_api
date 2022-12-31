@@ -81,6 +81,12 @@ const UserSchema: mongoose.Schema = new Schema(
       type: String,
       allowNull: false,
     },
+    courses: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Course",
+      },
+    ],
     resetPasswordToken: String,
     resetPasswordDate: Date,
   },
