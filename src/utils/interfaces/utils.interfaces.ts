@@ -27,6 +27,12 @@ export namespace BuildResponse {
   export type DataObject = {
     [props: string]: any;
   };
+
+  export type DataObjectArray = [
+    {
+      [props: string]: any;
+    }
+  ];
   export interface SuccessObj {
     success: boolean;
     message: string;
@@ -37,7 +43,7 @@ export namespace BuildResponse {
     res: Response;
     statusCode?: number;
     message?: string;
-    body?: object;
+    body?: DataObject | DataObjectArray;
     success?: boolean;
   }
 

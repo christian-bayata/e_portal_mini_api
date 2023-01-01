@@ -13,6 +13,16 @@ const findCourse = async (where: CourseDataInput): Promise<CourseDto | null> => 
 
 /**
  *
+ * @param where
+ * @returns {Promise<CourseDto[]>}
+ */
+
+const findCourses = async (where: CourseDataInput): Promise<CourseDto[]> => {
+  return await Course.find(where);
+};
+
+/**
+ *
  * @param data
  * @returns {Promise<Partial<CourseDto>>}
  */
@@ -31,4 +41,4 @@ const addStudentToCourse = async (courseId: string, studentId: string): Promise<
   return await Course.findOneAndUpdate({ _id: courseId }, { $addToSet: { registered_students: studentId } }, { new: true });
 };
 
-export default { findCourse, createCourse, addStudentToCourse };
+export default { findCourse, findCourses, createCourse, addStudentToCourse };

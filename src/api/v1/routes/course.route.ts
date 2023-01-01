@@ -8,4 +8,6 @@ CourseRouter.post("/create", userMiddleware.isAdmin, courseMiddleware.createCour
 
 CourseRouter.post("/register", userMiddleware.authenticateUser, courseMiddleware.registerCourseValidation, courseController.registerCourse);
 
+CourseRouter.get("/retrieve-courses", userMiddleware.authenticateUser, courseController.retrieveUserCourses);
+
 export default CourseRouter;

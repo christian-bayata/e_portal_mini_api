@@ -1,4 +1,5 @@
 export interface CourseDto {
+  registered_students: string[];
   _id?: string;
   name: string;
   code: string;

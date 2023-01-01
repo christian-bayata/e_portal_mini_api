@@ -70,10 +70,32 @@ const registerCourse = async (req: Request, res: AdditionalResponse): Promise<Bu
  *
  */
 
-const retrieveUserCourses = async (req: Request, res: AdditionalResponse) => {
+const retrieveUserCourses = async (req: Request, res: AdditionalResponse): Promise<BuildResponse.SuccessObj | undefined> => {
   const { user } = res;
+  const { semester, session } = req.query;
+
+  if (!semester || !session) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Please provide semester or session" });
 
   try {
+    const theCourses = await courseRepository.findCourses({ session });
+    const studentsCourses = theCourses.map((course) => {
+      const theRegisteredStudents = course.registered_students;
+      let theStudentCourses;
+      if (Array.isArray(theRegisteredStudents) && theRegisteredStudents.length) {
+        const checkForStudent = theRegisteredStudents.some((s) => s == user._id);
+        if (checkForStudent) {
+          theStudentCourses = {
+            courseId: course._id,
+            name: course.name,
+            code: course.code,
+            units: course.units,
+          };
+        }
+      }
+      return theStudentCourses;
+    });
+
+    return ResponseHandler.sendSuccess({ res, statusCode: statusCodes.CREATED, message: "Successfully retrieved courses", body: studentsCourses });
   } catch (error) {
     return ResponseHandler.sendFatalError({ res });
   }
