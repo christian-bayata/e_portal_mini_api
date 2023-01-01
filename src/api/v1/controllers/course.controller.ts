@@ -2,7 +2,9 @@ import { Request } from "express";
 import { AdditionalResponse } from "../../../utils/interfaces/utils.interfaces";
 import ResponseHandler from "../../../utils/response";
 import courseRepository from "../../../repositories/course.repository";
+import paymentRepository from "../../../repositories/payment.repository";
 import { statusCodes } from "../../../status-code";
+import { BuildResponse } from "../../../utils/interfaces/utils.interfaces";
 
 /**
  * @Author Edomaruse, Frank
@@ -13,7 +15,7 @@ import { statusCodes } from "../../../status-code";
  *
  */
 
-const createCourse = async (req: Request, res: AdditionalResponse) => {
+const createCourse = async (req: Request, res: AdditionalResponse): Promise<BuildResponse.SuccessObj | undefined> => {
   const { admin, data } = res;
 
   if (!admin) return ResponseHandler.sendError({ res, statusCode: statusCodes.UNAUTHORIZED, message: "You are not authorized" });
@@ -31,4 +33,50 @@ const createCourse = async (req: Request, res: AdditionalResponse) => {
   }
 };
 
-export default { createCourse };
+/**
+ * @Title Students register course(s)
+ * @Param req
+ * @Param res
+ * @returns {Promise<BuildResponse.SuccessObj | undefined>}
+ *
+ */
+
+const registerCourse = async (req: Request, res: AdditionalResponse): Promise<BuildResponse.SuccessObj | undefined> => {
+  const { user, data } = res;
+
+  try {
+    const hasPaid = await paymentRepository.findPayment({ user: user._id, session: data.session });
+    if (!hasPaid) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "Course registration denied. Please make payment" });
+
+    const theCourse = await courseRepository.findCourse({ _id: data.courseId });
+    if (!theCourse) return ResponseHandler.sendError({ res, statusCode: statusCodes.NOT_FOUND, message: "Course does not exist" });
+
+    /* Add student to the list of registered students for the selected course */
+    if (theCourse._id) {
+      await courseRepository.addStudentToCourse(theCourse._id, hasPaid.user);
+    }
+
+    return ResponseHandler.sendSuccess({ res, statusCode: statusCodes.CREATED, message: "Successfully registered course", body: theCourse });
+  } catch (error) {
+    return ResponseHandler.sendFatalError({ res });
+  }
+};
+
+/**
+ * @Title retrieve all user course(s) for a sesmeter
+ * @Param req
+ * @Param res
+ * @returns {Promise<BuildResponse.SuccessObj | undefined>}
+ *
+ */
+
+const retrieveUserCourses = async (req: Request, res: AdditionalResponse) => {
+  const { user } = res;
+
+  try {
+  } catch (error) {
+    return ResponseHandler.sendFatalError({ res });
+  }
+};
+
+export default { createCourse, registerCourse, retrieveUserCourses };

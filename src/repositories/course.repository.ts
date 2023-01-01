@@ -21,4 +21,14 @@ const createCourse = async (data: CourseDataInput): Promise<Partial<CourseDto>> 
   return await Course.create(data);
 };
 
-export default { findCourse, createCourse };
+/**
+ *
+ * @param courseId
+ * @param studentId
+ * @returns {Promise<CourseDto | null>}
+ */
+const addStudentToCourse = async (courseId: string, studentId: string): Promise<CourseDto | null> => {
+  return await Course.findOneAndUpdate({ _id: courseId }, { $addToSet: { registered_students: studentId } }, { new: true });
+};
+
+export default { findCourse, createCourse, addStudentToCourse };

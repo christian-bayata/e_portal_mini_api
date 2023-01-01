@@ -8,3 +8,7 @@ export interface PaymentDto {
   session: string;
   user: string;
 }
+
+export interface PaymentDataInput {
+  [props: string]: any;
+}

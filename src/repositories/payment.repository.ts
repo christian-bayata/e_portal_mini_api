@@ -1,4 +1,4 @@
-import { PaymentDto } from "../dto/payment.dto";
+import { PaymentDto, PaymentDataInput } from "../dto/payment.dto";
 import Payment from "../models/payment.model";
 
 /**
@@ -11,4 +11,14 @@ const createPayment = async (data: PaymentDto): Promise<Partial<PaymentDto>> => 
   return await Payment.create(data);
 };
 
-export default { createPayment };
+/**
+ *
+ * @param where
+ * @returns {Promise<PaymentDto | null>}
+ */
+
+const findPayment = async (where: PaymentDataInput): Promise<PaymentDto | null> => {
+  return await Payment.findOne(where);
+};
+
+export default { createPayment, findPayment };

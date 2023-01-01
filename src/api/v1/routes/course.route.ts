@@ -6,4 +6,6 @@ import courseMiddleware from "../../../middlewares/course.middleware";
 
 CourseRouter.post("/create", userMiddleware.isAdmin, courseMiddleware.createCourseValidation, courseController.createCourse);
 
+CourseRouter.post("/register", userMiddleware.authenticateUser, courseMiddleware.registerCourseValidation, courseController.registerCourse);
+
 export default CourseRouter;
