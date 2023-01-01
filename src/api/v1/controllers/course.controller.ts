@@ -22,7 +22,7 @@ const createCourse = async (req: Request, res: AdditionalResponse) => {
     const isCreated = await courseRepository.findCourse({ code: data.code });
     if (isCreated) return ResponseHandler.sendError({ res, statusCode: statusCodes.BAD_REQUEST, message: "This course has already been created" });
 
-    const courseData = { name: data.name.toUpperCase(), code: data.code, units: data.units, registered_students: [] };
+    const courseData = { name: data.name.toUpperCase(), code: data.code, units: data.units, semester: data.semester, session: data.session, registered_students: [] };
     const createdCourse = await courseRepository.createCourse(courseData);
 
     return ResponseHandler.sendSuccess({ res, statusCode: statusCodes.CREATED, message: "Course successfully created", body: createdCourse });

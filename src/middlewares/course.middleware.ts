@@ -21,6 +21,8 @@ const createCourseValidation = async (req: Request, res: AdditionalResponse, nex
       name: Joi.string().min(6).required(),
       code: Joi.string().max(6).required(),
       units: Joi.number().required(),
+      semester: Joi.string().required(),
+      session: Joi.string().required(),
     });
 
     const { error, value } = schema.validate(payload);

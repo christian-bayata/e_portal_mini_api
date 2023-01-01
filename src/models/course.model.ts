@@ -28,6 +28,14 @@ const CourseSchema: mongoose.Schema = new Schema(
       type: Number,
       required: true,
     },
+    semester: {
+      type: String,
+      enum: ["summer", "winter"],
+    },
+    session: {
+      type: String,
+      required: true,
+    },
     registered_students: [
       {
         type: Schema.Types.ObjectId,
